@@ -1316,9 +1316,8 @@ Proprietary - All rights reserved
 ## 👥 Support
 
 For questions or issues:
-- **Email**: support@cloudey.app
-- **Docs**: https://docs.cloudey.app
-- **Issues**: https://github.com/your-org/cloudey/issues
+- **Email**: isma@gonrod.com
+- **Issues**: https://github.com/ismgonza/cloudey-frontend/issues
 
 ---
 
