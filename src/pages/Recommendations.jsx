@@ -6,8 +6,10 @@ import {
   Lightbulb,
   DollarSign,
   RefreshCw,
-  Zap
+  Zap,
+  FileText
 } from 'lucide-react';
+import ResourceDetailsModal from '../components/ResourceDetailsModal';
 
 // Enhanced markdown renderer with table support
 function renderMarkdown(text) {
@@ -124,6 +126,12 @@ export default function Recommendations({ userId, onNavigateToChat }) {
   const [loadingMessage, setLoadingMessage] = useState('');
   const [metricsLoading, setMetricsLoading] = useState(false);
   const [metricsMessage, setMetricsMessage] = useState(null);
+  
+  // Modal state
+  const [modalData, setModalData] = useState(null);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalType, setModalType] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadingMessages = [
     "Analyzing your cost patterns...",
@@ -218,6 +226,15 @@ export default function Recommendations({ userId, onNavigateToChat }) {
     onNavigateToChat(question);
   };
 
+  const openDetailsModal = (recommendation) => {
+    if (!recommendation.details || !recommendation.details.data) return;
+    
+    setModalData(recommendation.details.data);
+    setModalTitle(`${recommendation.title} - Full Report (${recommendation.details.total_count} total)`);
+    setModalType(recommendation.type);
+    setIsModalOpen(true);
+  };
+
   const getSeverityColor = (severity) => {
     switch (severity) {
       case 'high':
@@ -272,7 +289,7 @@ export default function Recommendations({ userId, onNavigateToChat }) {
     );
   }
 
-  const { insights, recommendations, quick_wins, summary, total_potential_savings } = data;
+  const { insights, recommendations, quick_wins, summary, total_potential_savings, ai_analysis } = data;
 
   return (
     <div className="space-y-6">
@@ -280,7 +297,16 @@ export default function Recommendations({ userId, onNavigateToChat }) {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">AI Recommendations</h1>
-          <p className="text-gray-600 mt-1">Powered by cached data & real-time utilization metrics</p>
+          <p className="text-gray-600 mt-1">
+            {summary?.is_ai_powered ? (
+              <span className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-yellow-500" />
+                Powered by real AI analysis + cached data & metrics
+              </span>
+            ) : (
+              'Powered by cached data & real-time utilization metrics'
+            )}
+          </p>
         </div>
         <div className="flex gap-2">
           <button
@@ -313,7 +339,7 @@ export default function Recommendations({ userId, onNavigateToChat }) {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-green-800">
-              ${total_potential_savings?.toLocaleString() || 0}/month
+              ${total_potential_savings?.toLocaleString(undefined, { maximumFractionDigits: 0 }) || 0}/month
             </h2>
             <p className="text-green-600">Potential Savings Identified</p>
           </div>
@@ -332,124 +358,261 @@ export default function Recommendations({ userId, onNavigateToChat }) {
         </div>
       </div>
 
-      {/* Insights */}
-      {insights && insights.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-            <TrendingUp className="w-6 h-6 mr-2 text-blue-500" />
-            Cost Insights
-          </h2>
-          <div className="space-y-4">
-            {insights.map((insight, index) => (
-              <div
-                key={index}
-                className={`border rounded-lg p-4 ${getSeverityColor(insight.severity)}`}
-              >
-                <h3 className="font-semibold mb-2">{insight.title}</h3>
-                <p className="text-sm mb-2">{insight.description}</p>
-                {insight.action && (
-                  <div className="text-sm font-medium">
-                    💡 Action: {renderMarkdown(insight.action)}
-                  </div>
-                )}
-              </div>
-            ))}
+      {/* AI Analysis Section - THE REAL AI! */}
+      {ai_analysis && ai_analysis.narrative && (
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-300 rounded-lg p-6 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-purple-900 flex items-center">
+              <Zap className="w-6 h-6 mr-2 text-yellow-500" />
+              AI Analysis
+            </h2>
+            <span className="text-xs bg-purple-200 text-purple-800 px-3 py-1 rounded-full font-semibold">
+              Powered by LLM
+            </span>
           </div>
+
+
+          {/* AI Narrative */}
+          <div className="bg-white rounded-lg p-5 text-gray-800 space-y-3">
+            {ai_analysis.narrative.split('\n\n').map((paragraph, idx) => {
+              // Check if it's a heading (starts with **word:**)
+              const headingMatch = paragraph.match(/^\*\*([^*]+):\*\*/);
+              if (headingMatch) {
+                const heading = headingMatch[1];
+                const content = paragraph.substring(headingMatch[0].length).trim();
+                return (
+                  <div key={idx} className="space-y-2">
+                    <h3 className="text-lg font-bold text-purple-900">{heading}</h3>
+                    <div className="text-gray-700 leading-relaxed">
+                      {renderMarkdown(content)}
+                    </div>
+                  </div>
+                );
+              }
+              // Regular paragraph or list
+              return (
+                <div key={idx} className="text-gray-700 leading-relaxed">
+                  {renderMarkdown(paragraph)}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Reasoning Steps - Always open */}
+          {ai_analysis.reasoning_steps && ai_analysis.reasoning_steps.length > 0 && (
+            <details className="mt-4 bg-white/50 rounded-lg p-3" open>
+              <summary className="cursor-pointer text-sm font-semibold text-purple-800 hover:text-purple-900">
+                💡 AI Reasoning Steps
+              </summary>
+              <ul className="mt-3 space-y-1 text-sm text-gray-700 list-disc list-inside">
+                {ai_analysis.reasoning_steps.map((step, idx) => (
+                  <li key={idx}>{step}</li>
+                ))}
+              </ul>
+            </details>
+          )}
+
+          {/* Continue in Chat Button */}
+          {onNavigateToChat && (
+            <div className="mt-4 pt-4 border-t border-purple-200">
+              <button
+                onClick={() => {
+                  // Build context message with AI analysis
+                  const contextMessage = `I'm reviewing the AI cost analysis for my infrastructure. Here's what the AI found:\n\n${ai_analysis.narrative}\n\nI'd like to discuss these findings and ask some questions.`;
+                  onNavigateToChat(contextMessage);
+                }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+              >
+                💬 Continue this analysis in chat
+              </button>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Recommendations */}
+      {/* Insights section removed - Now using AI Narrative only */}
+
+      {/* Recommendations - Grid Layout */}
       {recommendations && recommendations.length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
             <Lightbulb className="w-6 h-6 mr-2 text-yellow-500" />
             Optimization Recommendations
           </h2>
-          <div className="space-y-4">
-            {recommendations.map((rec, index) => (
-              <div
-                key={index}
-                className={`border rounded-lg p-4 ${getSeverityColor(rec.severity)}`}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold">{rec.title}</h3>
-                  {rec.potential_savings && (
-                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
-                      Save ~${rec.potential_savings.toLocaleString()}/mo
-                    </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {recommendations.map((rec, index) => {
+              // Parse action text to extract clean content
+              const actionLines = rec.action.split('\n').filter(line => line.trim());
+              const titleLine = actionLines[0]?.replace(/\*\*/g, '').replace(/~/g, '').trim(); // Remove all ** and ~ markdown
+              const descriptionLine = actionLines[1]?.replace(/\*\*/g, '').trim() || rec.description;
+              
+              // Find "Recommended Actions:" section
+              const actionsStartIndex = actionLines.findIndex(line => line.includes('**Recommended Actions:**'));
+              const actionsEndIndex = actionLines.findIndex(line => line.includes('**Estimated Savings:**') || line.includes('**Potential Savings:**'));
+              
+              let actionItems = [];
+              if (actionsStartIndex !== -1) {
+                const endIndex = actionsEndIndex !== -1 ? actionsEndIndex : actionLines.length;
+                actionItems = actionLines
+                  .slice(actionsStartIndex + 1, endIndex)
+                  .filter(line => line.startsWith('•'))
+                  .slice(0, 3); // Show only first 3 action items
+              }
+              
+              return (
+                <div
+                  key={index}
+                  className={`border rounded-lg p-5 ${getSeverityColor(rec.severity)} hover:shadow-md transition-shadow`}
+                >
+                  {/* Header with savings badge */}
+                  <div className="flex justify-between items-start mb-3 gap-2">
+                    <h3 className="font-semibold text-base leading-tight flex-1">
+                      {titleLine}
+                    </h3>
+                    {rec.potential_savings && (
+                      <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold whitespace-nowrap">
+                        Save ~${Math.round(rec.potential_savings).toLocaleString()}/mo
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Description */}
+                  <p className="text-sm text-gray-700 mb-3">
+                    {descriptionLine}
+                  </p>
+                  
+                  {/* Action items */}
+                  {actionItems.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs font-semibold text-gray-600 mb-1">Recommended Actions:</p>
+                      <ul className="text-xs text-gray-700 space-y-1">
+                        {actionItems.map((item, idx) => (
+                          <li key={idx}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
+                  
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-3 flex-wrap pt-3 border-t border-gray-200">
+                    {onNavigateToChat && (
+                      <button
+                        onClick={() => onNavigateToChat(`How can I implement this recommendation: ${rec.title}?`)}
+                        className="text-xs text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"
+                      >
+                        💬 Ask AI how to implement this
+                      </button>
+                    )}
+                    {rec.details && rec.details.data && rec.details.data.length > 0 && (
+                      <button
+                        onClick={() => openDetailsModal(rec)}
+                        className="text-xs text-purple-600 hover:text-purple-800 hover:underline flex items-center gap-1"
+                      >
+                        <FileText className="w-4 h-4" />
+                        View Full Report ({rec.details.total_count})
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <p className="text-sm mb-2">{rec.description}</p>
-                <div className="text-sm font-medium mb-2">
-                  🎯 Action: {renderMarkdown(rec.action)}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Quick Wins */}
+      {/* Quick Wins - Grid Layout */}
       {quick_wins && quick_wins.length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
             <Zap className="w-6 h-6 mr-2 text-orange-500" />
             Quick Wins
           </h2>
-          <div className="space-y-4">
-            {quick_wins.map((win, index) => (
-              <div
-                key={index}
-                className="border border-orange-200 rounded-lg p-4 bg-orange-50"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold text-orange-900">{win.title}</h3>
-                  {win.potential_savings && (
-                    <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-semibold">
-                      Save ~${win.potential_savings.toLocaleString()}/mo
-                    </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {quick_wins.map((win, index) => {
+              // Parse action text to extract clean content
+              const actionLines = win.action.split('\n').filter(line => line.trim());
+              const titleLine = actionLines[0]?.replace(/\*\*/g, '').replace(/~/g, '').trim(); // Remove all ** and ~ markdown
+              const descriptionLine = actionLines.find(line => !line.includes('**') && line.length > 10)?.replace(/\*\*/g, '').trim() || win.description;
+              
+              // Find action items
+              const actionsStartIndex = actionLines.findIndex(line => line.includes('**⚡ Action:**') || line.includes('Action:'));
+              let actionItems = [];
+              if (actionsStartIndex !== -1) {
+                actionItems = actionLines
+                  .slice(actionsStartIndex + 1)
+                  .filter(line => line.startsWith('•'))
+                  .slice(0, 3);
+              }
+              
+              return (
+                <div
+                  key={index}
+                  className="border border-orange-200 rounded-lg p-5 bg-orange-50 hover:shadow-md transition-shadow"
+                >
+                  {/* Header with savings badge */}
+                  <div className="flex justify-between items-start mb-3 gap-2">
+                    <h3 className="font-semibold text-base text-orange-900 leading-tight flex-1">
+                      {titleLine || win.title}
+                    </h3>
+                    {win.potential_savings && (
+                      <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-semibold whitespace-nowrap">
+                        Save ~${Math.round(win.potential_savings).toLocaleString()}/mo
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Description */}
+                  <p className="text-sm text-orange-800 mb-3">
+                    {descriptionLine}
+                  </p>
+                  
+                  {/* Action items */}
+                  {actionItems.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs font-semibold text-orange-700 mb-1">Quick Actions:</p>
+                      <ul className="text-xs text-orange-800 space-y-1">
+                        {actionItems.map((item, idx) => (
+                          <li key={idx}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
+                  
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-3 flex-wrap pt-3 border-t border-orange-200">
+                    {onNavigateToChat && (
+                      <button
+                        onClick={() => onNavigateToChat(`How can I implement this quick win: ${win.title}?`)}
+                        className="text-xs text-orange-700 hover:text-orange-900 hover:underline flex items-center gap-1"
+                      >
+                        💬 Ask AI how to implement this
+                      </button>
+                    )}
+                    {win.details && win.details.data && win.details.data.length > 0 && (
+                      <button
+                        onClick={() => openDetailsModal(win)}
+                        className="text-xs text-purple-600 hover:text-purple-800 hover:underline flex items-center gap-1"
+                      >
+                        <FileText className="w-4 h-4" />
+                        View Full Report ({win.details.total_count})
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <p className="text-sm text-orange-800 mb-2">{win.description}</p>
-                <div className="text-sm font-medium text-orange-900">
-                  ⚡ Action: {renderMarkdown(win.action)}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Ask AI Section */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Ask AI for More Insights</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <button
-            onClick={() => handleAskAI("Why did my costs change this month?")}
-            className="px-4 py-3 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition text-left"
-          >
-            <span className="font-medium text-blue-900">Why did costs change?</span>
-          </button>
-          <button
-            onClick={() => handleAskAI("What are my top 10 most expensive resources?")}
-            className="px-4 py-3 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition text-left"
-          >
-            <span className="font-medium text-blue-900">Top expensive resources</span>
-          </button>
-          <button
-            onClick={() => handleAskAI("Compare my costs over the last 3 months")}
-            className="px-4 py-3 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition text-left"
-          >
-            <span className="font-medium text-blue-900">Compare 3-month trend</span>
-          </button>
-          <button
-            onClick={() => handleAskAI("What optimization opportunities exist?")}
-            className="px-4 py-3 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition text-left"
-          >
-            <span className="font-medium text-blue-900">Find optimizations</span>
-          </button>
-        </div>
-      </div>
+      {/* Resource Details Modal */}
+      <ResourceDetailsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={modalData}
+        title={modalTitle}
+        type={modalType}
+      />
     </div>
   );
 }

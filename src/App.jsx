@@ -114,13 +114,6 @@ function App() {
       </div>
 
               <button
-                onClick={handleNewChat}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all duration-200 shadow-md"
-              >
-                <Plus className="w-4 h-4" />
-                <span className="text-sm font-medium">New Chat</span>
-              </button>
-              <button
                 onClick={() => setIsConfigModalOpen(true)}
                 className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
@@ -162,6 +155,7 @@ function App() {
               sessionId={sessionId}
               initialMessage={initialChatMessage}
               onMessageSent={() => setInitialChatMessage(null)}
+              onNewChat={handleNewChat}
             />
           </main>
 

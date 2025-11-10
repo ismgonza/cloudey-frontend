@@ -84,13 +84,13 @@ export default function ConversationHistory({ userId, currentSessionId, onSelect
 
   return (
     <>
-      {/* Toggle Button */}
+      {/* Toggle Button - Positioned relative to main header */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed left-4 top-24 z-40 p-3 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200"
+        className="fixed left-6 top-28 z-40 p-2.5 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-gray-200 hover:border-primary-300"
         title="Conversation History"
       >
-        <Menu className="w-5 h-5 text-gray-700" />
+        <Menu className="w-5 h-5 text-gray-600" />
       </button>
 
       {/* Overlay */}
@@ -149,18 +149,18 @@ export default function ConversationHistory({ userId, currentSessionId, onSelect
                     <div
                       key={session.id}
                       className={`relative group rounded-lg transition-all duration-200 ${
-                        session.session_id === currentSessionId
+                        session.id === currentSessionId
                           ? 'bg-primary-50 border-2 border-primary-500'
                           : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
                       }`}
                     >
                       <button
-                        onClick={() => handleSelectSession(session.session_id)}
+                        onClick={() => handleSelectSession(session.id)}
                         className="w-full text-left p-3 pr-10"
                       >
                         <div className="flex items-start justify-between mb-1">
                           <p className={`text-sm font-medium line-clamp-2 ${
-                            session.session_id === currentSessionId
+                            session.id === currentSessionId
                               ? 'text-primary-700'
                               : 'text-gray-900'
                           }`}>
@@ -175,12 +175,12 @@ export default function ConversationHistory({ userId, currentSessionId, onSelect
                       
                       {/* Delete button */}
                       <button
-                        onClick={(e) => handleDeleteSession(session.session_id, e)}
-                        disabled={deletingId === session.session_id}
+                        onClick={(e) => handleDeleteSession(session.id, e)}
+                        disabled={deletingId === session.id}
                         className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-md opacity-0 group-hover:opacity-100 hover:bg-red-50 text-gray-400 hover:text-red-600 transition-all duration-200 disabled:opacity-50"
                         title="Delete conversation"
                       >
-                        {deletingId === session.session_id ? (
+                        {deletingId === session.id ? (
                           <RefreshCw className="w-4 h-4 animate-spin text-red-600" />
                         ) : (
                           <Trash2 className="w-4 h-4" />

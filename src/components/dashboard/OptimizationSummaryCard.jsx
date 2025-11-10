@@ -31,12 +31,20 @@ export default function OptimizationSummaryCard({ data }) {
       <div className="mb-6 p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
         <p className="text-sm font-medium text-gray-700 mb-1 flex items-center">
           <TrendingDown className="w-4 h-4 mr-1 text-green-600" />
-          Potential Annual Savings
+          Potential Monthly Savings
         </p>
         <p className="text-3xl font-bold text-green-700">
-          ${data.potential_annual_savings?.toLocaleString() || '0'}
-          <span className="text-sm ml-2 font-normal text-green-600">/year</span>
+          ${Math.round(data.potential_monthly_savings || 0).toLocaleString()}
+          <span className="text-sm ml-2 font-normal text-green-600">/month</span>
         </p>
+        <div className="mt-3 pt-3 border-t border-green-200">
+          <p className="text-xs text-gray-600 flex items-start">
+            <AlertCircle className="w-3 h-3 mr-1 mt-0.5 text-gray-500 flex-shrink-0" />
+            <span>
+              <span className="font-medium">From:</span> All optimization opportunities (rightsizing, scheduling, reserved capacity, storage cleanup, etc.)
+            </span>
+          </p>
+        </div>
       </div>
 
       {/* Severity Breakdown */}

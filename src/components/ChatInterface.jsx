@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Bot, User, Loader2 } from 'lucide-react';
+import { Send, Bot, User, Loader2, Plus } from 'lucide-react';
 import { api } from '../utils/api';
 import MarkdownMessage from './MarkdownMessage';
 
-export default function ChatInterface({ userId = 1, sessionId, initialMessage, onMessageSent }) {
+export default function ChatInterface({ userId = 1, sessionId, initialMessage, onMessageSent, onNewChat }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -120,14 +120,26 @@ export default function ChatInterface({ userId = 1, sessionId, initialMessage, o
     <div className="flex flex-col h-full bg-white rounded-lg shadow-lg">
       {/* Chat Header */}
       <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-primary-600 to-primary-700">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-            <Bot className="w-6 h-6 text-white" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <Bot className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-white">Cloudey AI Assistant</h2>
+              <p className="text-sm text-primary-100">Ask me about your cloud costs</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-lg font-semibold text-white">Cloudey AI Assistant</h2>
-            <p className="text-sm text-primary-100">Ask me about your cloud costs</p>
-          </div>
+          {onNewChat && (
+            <button
+              onClick={onNewChat}
+              className="flex items-center space-x-2 px-3 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200 border border-white/30"
+              title="Start new conversation"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="text-sm font-medium">New Chat</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -158,7 +170,7 @@ export default function ChatInterface({ userId = 1, sessionId, initialMessage, o
               <div className="mt-4 space-y-2 text-sm text-gray-600">
                 <p>• "List my compartments"</p>
                 <p>• "What are my costs for last month?"</p>
-                <p>• "Show me costs for the kobie_prod compartment"</p>
+                <p>• "Show me costs for the dev compartment"</p>
               </div>
             </motion.div>
           )}

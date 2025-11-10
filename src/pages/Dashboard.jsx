@@ -3,7 +3,6 @@ import { RefreshCw, Database } from 'lucide-react';
 import CostOverviewCard from '../components/dashboard/CostOverviewCard';
 import OptimizationSummaryCard from '../components/dashboard/OptimizationSummaryCard';
 import CostAlertsCard from '../components/dashboard/CostAlertsCard';
-import QuickActionsCard from '../components/dashboard/QuickActionsCard';
 import ResourceInventoryCard from '../components/dashboard/ResourceInventoryCard';
 import CostTrendCard from '../components/dashboard/CostTrendCard';
 
@@ -204,12 +203,6 @@ export default function Dashboard({ userId = 1, onNavigateToChat, onNavigateToCo
         </div>
 
         {/* Row 3: Cost Alerts - Removed (now in Optimization Summary) */}
-
-        {/* Row 4: Quick Actions */}
-        <QuickActionsCard 
-          onNavigateToChat={onNavigateToChat}
-          onNavigateToCosts={onNavigateToCosts}
-        />
       </div>
 
       {/* Footer */}
