@@ -118,7 +118,7 @@ export default function Dashboard({ userId = 1, onNavigateToChat, onNavigateToCo
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <RefreshCw className="w-12 h-12 animate-spin text-primary-600 mx-auto mb-4" />
+          <RefreshCw className="w-12 h-12 animate-spin text-cyan-600 mx-auto mb-4" />
           <p className="text-lg text-gray-600">{loadingMessage}</p>
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function Dashboard({ userId = 1, onNavigateToChat, onNavigateToCo
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={handleRefresh}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
+            className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg hover:from-cyan-600 hover:to-cyan-700 transition shadow-md hover:shadow-lg"
           >
             Try Again
           </button>
@@ -150,7 +150,7 @@ export default function Dashboard({ userId = 1, onNavigateToChat, onNavigateToCo
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-6">
+      <div className="max-w-7xl mx-auto mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -170,7 +170,7 @@ export default function Dashboard({ userId = 1, onNavigateToChat, onNavigateToCo
             <button
               onClick={handleManualSync}
               disabled={syncing}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg hover:from-cyan-600 hover:to-cyan-700 transition shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               title="Sync resources from OCI"
             >
               <Database className={`w-5 h-5 ${syncing ? 'animate-pulse' : ''}`} />
@@ -179,7 +179,7 @@ export default function Dashboard({ userId = 1, onNavigateToChat, onNavigateToCo
             <button
               onClick={handleRefresh}
               disabled={refreshing}
-              className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+              className="flex items-center space-x-2 px-4 py-2 bg-white border-2 border-cyan-300 text-cyan-700 rounded-lg hover:bg-cyan-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
               <span>Refresh</span>

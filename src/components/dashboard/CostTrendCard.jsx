@@ -34,7 +34,7 @@ export default function CostTrendCard({ data }) {
     >
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900 flex items-center">
-          <TrendingUp className="w-6 h-6 mr-2 text-primary-600" />
+          <TrendingUp className="w-6 h-6 mr-2 text-cyan-600" />
           Cost Trend
         </h2>
       </div>
@@ -91,9 +91,9 @@ export default function CostTrendCard({ data }) {
         </div>
         
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="p-3 bg-purple-50 rounded-lg">
+          <div className="p-3 bg-cyan-50 rounded-lg border border-cyan-100">
             <p className="text-xs font-medium text-gray-600 mb-1">{data.current_month_name} (MTD)</p>
-            <p className="text-xl font-bold text-purple-900">
+            <p className="text-xl font-bold text-cyan-900">
               ${data.current_mtd?.toLocaleString()}
             </p>
           </div>

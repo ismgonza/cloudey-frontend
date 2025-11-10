@@ -22,7 +22,7 @@ export default function OptimizationSummaryCard({ data }) {
           <Lightbulb className="w-6 h-6 mr-2 text-yellow-500" />
           Optimization Summary
         </h2>
-        <span className="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-semibold">
+        <span className="px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full text-sm font-semibold">
           {data.total_recommendations || 0} recommendations
         </span>
       </div>

@@ -12,18 +12,18 @@ export default function CostOverviewCard({ data }) {
     >
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900 flex items-center">
-          <DollarSign className="w-6 h-6 mr-2 text-primary-600" />
+          <DollarSign className="w-6 h-6 mr-2 text-cyan-600" />
           Cost Overview
         </h2>
         <span className="text-sm text-gray-500">{data.period?.label}</span>
       </div>
 
       {/* Total Cost */}
-      <div className="mb-6 p-4 bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg">
+      <div className="mb-6 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-lg border border-cyan-100">
         <p className="text-sm font-medium text-gray-600 mb-1">Total Spend</p>
-        <p className="text-4xl font-bold text-primary-900">
+        <p className="text-4xl font-bold text-cyan-900">
           ${data.total_cost?.toLocaleString()}
-          <span className="text-lg ml-2 text-primary-700">{data.currency}</span>
+          <span className="text-lg ml-2 text-cyan-700">{data.currency}</span>
         </p>
       </div>
 

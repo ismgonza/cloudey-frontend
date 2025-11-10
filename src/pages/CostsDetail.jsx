@@ -85,7 +85,7 @@ function CostsDetail() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <RefreshCw className="w-12 h-12 animate-spin text-primary-600 mx-auto mb-4" />
+          <RefreshCw className="w-12 h-12 animate-spin text-cyan-600 mx-auto mb-4" />
           <p className="text-lg text-gray-600">{loadingMessage}</p>
         </div>
       </div>
@@ -110,24 +110,24 @@ function CostsDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Detailed Cost Analysis</h1>
-              <p className="text-sm text-gray-600 mt-1">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Detailed Cost Analysis</h1>
+              <p className="text-gray-600">
                 Last 3 months: {data?.metadata?.month_names?.join(' • ')}
               </p>
             </div>
             <button
               onClick={handleRefresh}
               disabled={refreshing}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all shadow-md hover:shadow-lg ${
                 refreshing
                   ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-gradient-to-r from-cyan-500 to-cyan-600 text-white hover:from-cyan-600 hover:to-cyan-700'
               }`}
             >
               <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
@@ -137,7 +137,7 @@ function CostsDetail() {
 
           {/* Totals Summary */}
           {data?.totals && (
-            <div className="mt-4 grid grid-cols-4 gap-4">
+            <div className="mt-6 grid grid-cols-4 gap-4">
               {data.totals.months.map((amount, idx) => (
                 <div key={idx} className="bg-gray-50 rounded-lg p-3">
                   <p className="text-xs text-gray-600">{data.metadata.month_names[idx]}</p>
@@ -159,12 +159,9 @@ function CostsDetail() {
             </div>
           )}
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Section 1: Compartments with Expandable Services */}
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">
               💼 Cost by Compartment
@@ -183,7 +180,7 @@ function CostsDetail() {
         </div>
 
         {/* Section 2: Services Summary */}
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">
               🔧 Cost by Service (All Compartments)
@@ -201,7 +198,7 @@ function CostsDetail() {
         </div>
 
         {/* Section 3: Top Cost Drivers */}
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">
               🔥 Top 10 Most Expensive Resources
@@ -216,7 +213,7 @@ function CostsDetail() {
         </div>
 
         {/* Footer */}
-        <div className="max-w-7xl mx-auto mt-6 text-center text-sm text-gray-500">
+        <div className="text-center text-sm text-gray-500">
           Last updated: {data?.metadata?.generated_at ? 
             new Date(data.metadata.generated_at).toLocaleString() : 
             'N/A'

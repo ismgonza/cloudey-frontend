@@ -292,38 +292,41 @@ export default function Recommendations({ userId, onNavigateToChat }) {
   const { insights, recommendations, quick_wins, summary, total_potential_savings, ai_analysis } = data;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">AI Recommendations</h1>
-          <p className="text-gray-600 mt-1">
-            {summary?.is_ai_powered ? (
-              <span className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-yellow-500" />
-                Powered by real AI analysis + cached data & metrics
-              </span>
-            ) : (
-              'Powered by cached data & real-time utilization metrics'
-            )}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={handleRefreshMetrics}
-            disabled={metricsLoading}
-            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${metricsLoading ? 'animate-spin' : ''}`} />
-            {metricsLoading ? 'Syncing...' : 'Refresh Metrics'}
-          </button>
-          <button
-            onClick={handleRefresh}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
-          </button>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Recommendations</h1>
+            <p className="text-gray-600">
+              {summary?.is_ai_powered ? (
+                <span className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-yellow-500" />
+                  Powered by real AI analysis + cached data & metrics
+                </span>
+              ) : (
+                'Powered by cached data & real-time utilization metrics'
+              )}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleRefreshMetrics}
+              disabled={metricsLoading}
+              className="flex items-center px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg hover:from-cyan-600 hover:to-cyan-700 transition shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${metricsLoading ? 'animate-spin' : ''}`} />
+              {metricsLoading ? 'Syncing...' : 'Refresh Metrics'}
+            </button>
+            <button
+              onClick={handleRefresh}
+              className="flex items-center px-4 py-2 bg-white border-2 border-cyan-300 text-cyan-700 rounded-lg hover:bg-cyan-50 transition"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh
+            </button>
+          </div>
         </div>
       </div>
 
@@ -360,13 +363,13 @@ export default function Recommendations({ userId, onNavigateToChat }) {
 
       {/* AI Analysis Section - THE REAL AI! */}
       {ai_analysis && ai_analysis.narrative && (
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-300 rounded-lg p-6 shadow-lg">
+        <div className="bg-gradient-to-r from-cyan-50 to-blue-50 border-2 border-cyan-300 rounded-xl p-6 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-purple-900 flex items-center">
+            <h2 className="text-xl font-bold text-cyan-900 flex items-center">
               <Zap className="w-6 h-6 mr-2 text-yellow-500" />
               AI Analysis
             </h2>
-            <span className="text-xs bg-purple-200 text-purple-800 px-3 py-1 rounded-full font-semibold">
+            <span className="text-xs bg-cyan-200 text-cyan-800 px-3 py-1 rounded-full font-semibold">
               Powered by LLM
             </span>
           </div>
@@ -382,7 +385,7 @@ export default function Recommendations({ userId, onNavigateToChat }) {
                 const content = paragraph.substring(headingMatch[0].length).trim();
                 return (
                   <div key={idx} className="space-y-2">
-                    <h3 className="text-lg font-bold text-purple-900">{heading}</h3>
+                    <h3 className="text-lg font-bold text-cyan-900">{heading}</h3>
                     <div className="text-gray-700 leading-relaxed">
                       {renderMarkdown(content)}
                     </div>
@@ -401,7 +404,7 @@ export default function Recommendations({ userId, onNavigateToChat }) {
           {/* Reasoning Steps - Always open */}
           {ai_analysis.reasoning_steps && ai_analysis.reasoning_steps.length > 0 && (
             <details className="mt-4 bg-white/50 rounded-lg p-3" open>
-              <summary className="cursor-pointer text-sm font-semibold text-purple-800 hover:text-purple-900">
+              <summary className="cursor-pointer text-sm font-semibold text-cyan-800 hover:text-cyan-900">
                 💡 AI Reasoning Steps
               </summary>
               <ul className="mt-3 space-y-1 text-sm text-gray-700 list-disc list-inside">
@@ -414,14 +417,14 @@ export default function Recommendations({ userId, onNavigateToChat }) {
 
           {/* Continue in Chat Button */}
           {onNavigateToChat && (
-            <div className="mt-4 pt-4 border-t border-purple-200">
+            <div className="mt-4 pt-4 border-t border-cyan-200">
               <button
                 onClick={() => {
                   // Build context message with AI analysis
                   const contextMessage = `I'm reviewing the AI cost analysis for my infrastructure. Here's what the AI found:\n\n${ai_analysis.narrative}\n\nI'd like to discuss these findings and ask some questions.`;
                   onNavigateToChat(contextMessage);
                 }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg hover:from-cyan-600 hover:to-cyan-700 transition shadow-md hover:shadow-lg"
               >
                 💬 Continue this analysis in chat
               </button>
@@ -432,9 +435,9 @@ export default function Recommendations({ userId, onNavigateToChat }) {
 
       {/* Insights section removed - Now using AI Narrative only */}
 
-      {/* Recommendations - Grid Layout */}
-      {recommendations && recommendations.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        {/* Recommendations - Grid Layout */}
+        {recommendations && recommendations.length > 0 && (
+          <div className="bg-white border border-gray-200 rounded-xl p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
             <Lightbulb className="w-6 h-6 mr-2 text-yellow-500" />
             Optimization Recommendations
@@ -498,7 +501,7 @@ export default function Recommendations({ userId, onNavigateToChat }) {
                     {onNavigateToChat && (
                       <button
                         onClick={() => onNavigateToChat(`How can I implement this recommendation: ${rec.title}?`)}
-                        className="text-xs text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"
+                        className="text-xs text-cyan-600 hover:text-cyan-800 hover:underline flex items-center gap-1"
                       >
                         💬 Ask AI how to implement this
                       </button>
@@ -506,7 +509,7 @@ export default function Recommendations({ userId, onNavigateToChat }) {
                     {rec.details && rec.details.data && rec.details.data.length > 0 && (
                       <button
                         onClick={() => openDetailsModal(rec)}
-                        className="text-xs text-purple-600 hover:text-purple-800 hover:underline flex items-center gap-1"
+                        className="text-xs text-cyan-600 hover:text-cyan-800 hover:underline flex items-center gap-1"
                       >
                         <FileText className="w-4 h-4" />
                         View Full Report ({rec.details.total_count})
@@ -520,9 +523,9 @@ export default function Recommendations({ userId, onNavigateToChat }) {
         </div>
       )}
 
-      {/* Quick Wins - Grid Layout */}
-      {quick_wins && quick_wins.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        {/* Quick Wins - Grid Layout */}
+        {quick_wins && quick_wins.length > 0 && (
+          <div className="bg-white border border-gray-200 rounded-xl p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
             <Zap className="w-6 h-6 mr-2 text-orange-500" />
             Quick Wins
@@ -583,7 +586,7 @@ export default function Recommendations({ userId, onNavigateToChat }) {
                     {onNavigateToChat && (
                       <button
                         onClick={() => onNavigateToChat(`How can I implement this quick win: ${win.title}?`)}
-                        className="text-xs text-orange-700 hover:text-orange-900 hover:underline flex items-center gap-1"
+                        className="text-xs text-cyan-600 hover:text-cyan-800 hover:underline flex items-center gap-1"
                       >
                         💬 Ask AI how to implement this
                       </button>
@@ -591,7 +594,7 @@ export default function Recommendations({ userId, onNavigateToChat }) {
                     {win.details && win.details.data && win.details.data.length > 0 && (
                       <button
                         onClick={() => openDetailsModal(win)}
-                        className="text-xs text-purple-600 hover:text-purple-800 hover:underline flex items-center gap-1"
+                        className="text-xs text-cyan-600 hover:text-cyan-800 hover:underline flex items-center gap-1"
                       >
                         <FileText className="w-4 h-4" />
                         View Full Report ({win.details.total_count})
@@ -605,14 +608,15 @@ export default function Recommendations({ userId, onNavigateToChat }) {
         </div>
       )}
 
-      {/* Resource Details Modal */}
-      <ResourceDetailsModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        data={modalData}
-        title={modalTitle}
-        type={modalType}
-      />
+        {/* Resource Details Modal */}
+        <ResourceDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          data={modalData}
+          title={modalTitle}
+          type={modalType}
+        />
+      </div>
     </div>
   );
 }
